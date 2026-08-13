@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+/* ── Global smooth scroll ── */
+html {
+  scroll-behavior: smooth;
+}
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Scrollbar hide ── */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Thin orange scrollbar for main area ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #FF6B01; border-radius: 99px; }
+
+/* ── Global ── */
+* { scroll-behavior: smooth; box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  background: #111111;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* ── Line clamp ── */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Safe area for mobile bottom nav ── */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* HorizontalCards custom scrollbar */
+.hcards-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 1, 0.45) rgba(255, 255, 255, 0.05);
+}
+.hcards-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.hcards-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+}
+.hcards-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 1, 0.45);
+  border-radius: 99px;
+}
+.hcards-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 1, 0.75);
+}
