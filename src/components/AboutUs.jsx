@@ -91,7 +91,7 @@ const AboutUs = () => {
         </div>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {[{ name: "Harshit Gupta", role: "MERN Developer" }].map((person, i) => (
+          {[{ name: "Bhunesh Mittal", role: "MERN Developer" }].map((person, i) => (
             <motion.div
               key={i}
               whileHover={{ y: -4 }}
