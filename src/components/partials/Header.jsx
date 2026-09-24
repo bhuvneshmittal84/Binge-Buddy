@@ -1,12 +1,24 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAuth } from "../../context/AuthContext";
+import { useWatchlist } from "../../context/WatchlistContext";
 
 const Header = ({ data }) => {
+  const navigate   = useNavigate();
+  const { user }   = useAuth();
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+
   const title    = data.name || data.title || data.original_name || data.original_title;
   const year     = (data.release_date || data.first_air_date || "").slice(0, 4);
   const overview = data.overview?.slice(0, 200);
   const imageUrl = `https://image.tmdb.org/t/p/original/${data.backdrop_path || data.profile_path || data.poster_path}`;
+  const saved    = isInWatchlist(data.id);
+
+  const handleWatchlist = () => {
+    if (!user) { navigate("/login"); return; }
+    toggleWatchlist({ ...data, savedType: data.media_type });
+  };
 
   return (
     <div className="relative w-full h-[50vh] sm:h-[60vh] lg:h-[72vh] overflow-hidden">
@@ -110,7 +122,7 @@ const Header = ({ data }) => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.42, duration: 0.4 }}
           style={{ willChange: "transform, opacity" }}
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 flex-wrap"
         >
           <Link
             to={`/${data.media_type}/details/${data.id}/trailer`}
@@ -126,6 +138,20 @@ const Header = ({ data }) => {
             <i className="ri-information-line text-base" />
             <span className="hidden sm:inline">More Info</span>
           </Link>
+          {/* Watchlist button */}
+          <button
+            id={`header-watchlist-${data.id}`}
+            onClick={handleWatchlist}
+            title={saved ? "Remove from watchlist" : "Add to watchlist"}
+            className={`flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold text-sm transition-all duration-200 border ${
+              saved
+                ? "bg-[#FF6B01]/20 border-[#FF6B01]/50 text-[#FF6B01] hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400"
+                : "bg-white/10 backdrop-blur-sm border-white/15 text-white hover:bg-[#FF6B01]/20 hover:border-[#FF6B01]/50 hover:text-[#FF6B01]"
+            }`}
+          >
+            <i className={`${saved ? "ri-bookmark-fill" : "ri-bookmark-line"} text-base`} />
+            <span className="hidden sm:inline">{saved ? "In Watchlist" : "Watchlist"}</span>
+          </button>
         </motion.div>
       </div>
 

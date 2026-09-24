@@ -7,10 +7,13 @@ import HorizontalCards from "./partials/HorizontalCards";
 import Dropdown from "./partials/Dropdown";
 import Loader from "./partials/Loader";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 function Home() {
   document.title = "Home - BingeBuddy";
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [wallpaper,   setwallpaper]   = useState(null);
   const [trending,    setTrending]    = useState(null);
   const [popular,     setPopular]     = useState(null);
@@ -126,6 +129,38 @@ function Home() {
             </button>
             <div className="flex-1 min-w-0">
               <TopNav hideLogo />
+            </div>
+            {/* User avatar / sign-in */}
+            <div className="shrink-0 flex items-center gap-2">
+              {user ? (
+                <>
+                  <Link
+                    to="/watchlist"
+                    id="home-watchlist-btn"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6B01]/10 hover:bg-[#FF6B01]/20 border border-[#FF6B01]/20 text-[#FF6B01] text-xs font-semibold rounded-xl transition-all"
+                  >
+                    <i className="ri-bookmark-fill text-sm" />
+                    <span>Watchlist</span>
+                  </Link>
+                  <button
+                    id="home-user-avatar"
+                    title={`Signed in as ${user.username}`}
+                    onClick={() => { logout(); navigate("/login"); }}
+                    className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B01] to-[#e55f00] flex items-center justify-center shadow-md hover:shadow-[#FF6B01]/40 transition-shadow"
+                  >
+                    <span className="text-white text-xs font-bold uppercase">{user.username[0]}</span>
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  id="home-signin-btn"
+                  className="flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6B01] hover:bg-[#e55f00] text-white text-xs font-bold rounded-xl transition-all shadow-lg shadow-[#FF6B01]/25"
+                >
+                  <i className="ri-login-box-line" />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

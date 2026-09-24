@@ -13,30 +13,53 @@ import PeopleDetails from "./components/PeopleDetails";
 import Moviedetails from "./components/MovieDetails";
 import Trailer from "./components/partials/Trailer";
 import Notfound from "./components/partials/NotFound";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Watchlist from "./components/Watchlist";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
+import { WatchlistProvider } from "./context/WatchlistContext";
 
 function App() {
   return (
-    <div className="w-screen h-screen bg-[#1F1E24] flex">
-      <Routes>
-        {/* Define your routes here */}
-        <Route path="/" element={<Home />} />
-        <Route path="/trending" element={<Trending />} />
-        <Route path="/popular" element={<Popular />}></Route>
-        <Route path="/movies" element={<Movies />}></Route>
-        <Route path="/movie/details/:id" element={<Moviedetails />}>
-        <Route path="/movie/details/:id/trailer" element={<Trailer/>}></Route>
-        </Route>
-        <Route path="/tvshows" element={<TVShows />}></Route>
-        <Route path="/tv/details/:id" element={<TvDetails />}>
-         <Route path="/tv/details/:id/trailer" element={<Trailer/>}></Route>
-         </Route>
-        <Route path="/peoples" element={<Peoples />}></Route>
-        <Route path="/people/details/:id" element={<PeopleDetails />}></Route>
-        <Route path="/aboutus" element={<AboutUs />}></Route>
-        <Route path="/contactus" element={<ContactUs />}></Route>
-        <Route path="*" element={<Notfound/>}></Route>
-      </Routes>
-    </div> 
+    <AuthProvider>
+      <WatchlistProvider>
+        <div className="w-screen h-screen bg-[#1F1E24] flex">
+          <Routes>
+            {/* Public routes */}
+            <Route path="/"         element={<Home />} />
+            <Route path="/login"    element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/trending" element={<Trending />} />
+            <Route path="/popular"  element={<Popular />} />
+            <Route path="/movies"   element={<Movies />} />
+            <Route path="/movie/details/:id" element={<Moviedetails />}>
+              <Route path="/movie/details/:id/trailer" element={<Trailer />} />
+            </Route>
+            <Route path="/tvshows"  element={<TVShows />} />
+            <Route path="/tv/details/:id" element={<TvDetails />}>
+              <Route path="/tv/details/:id/trailer" element={<Trailer />} />
+            </Route>
+            <Route path="/peoples"            element={<Peoples />} />
+            <Route path="/people/details/:id" element={<PeopleDetails />} />
+            <Route path="/aboutus"   element={<AboutUs />} />
+            <Route path="/contactus" element={<ContactUs />} />
+
+            {/* Protected routes */}
+            <Route
+              path="/watchlist"
+              element={
+                <ProtectedRoute>
+                  <Watchlist />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route path="*" element={<Notfound />} />
+          </Routes>
+        </div>
+      </WatchlistProvider>
+    </AuthProvider>
   );
 }
 

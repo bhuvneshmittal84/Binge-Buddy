@@ -91,7 +91,7 @@ const AboutUs = () => {
         </div>
 
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {[{ name: "Bhunesh Mittal", role: "MERN Developer" }].map((person, i) => (
+          {[{ name: "Bhunesh Mittal" }].map((person, i) => (
             <motion.div
               key={i}
               whileHover={{ y: -4 }}
@@ -102,7 +102,6 @@ const AboutUs = () => {
                 <img className="w-full h-full object-cover" src={profilePic} alt={person.name} />
               </div>
               <h3 className="text-white font-bold text-base">{person.name}</h3>
-              <p className="text-[#FF6B01] text-sm mt-1">{person.role}</p>
             </motion.div>
           ))}
         </div>

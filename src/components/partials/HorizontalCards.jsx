@@ -1,6 +1,8 @@
 import React, { useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import NoImage from "../../../public/No_image.jpg";
+import { useWatchlist } from "../../context/WatchlistContext";
+import { useAuth } from "../../context/AuthContext";
 
 const CardSkeleton = () => (
   <div className="min-w-[140px] sm:min-w-[160px] lg:min-w-[175px] rounded-2xl overflow-hidden bg-[#353535]/40 animate-pulse shrink-0">
@@ -13,7 +15,17 @@ const CardSkeleton = () => (
 );
 
 const HorizontalCards = ({ data }) => {
+  const { user } = useAuth();
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
+  const navigate = useNavigate();
   const scrollRef = useRef(null);
+
+  const handleBookmark = (e, item) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) { navigate("/login"); return; }
+    toggleWatchlist({ ...item, savedType: item.media_type });
+  };
   const isDragging = useRef(false);
   const startX    = useRef(0);
   const scrollLeft = useRef(0);
@@ -91,6 +103,7 @@ const HorizontalCards = ({ data }) => {
           const imagePath = d.poster_path || d.profile_path || d.backdrop_path;
           const mediaType = d.media_type;
           const year      = (d.release_date || d.first_air_date || "").slice(0, 4);
+          const saved     = isInWatchlist(d.id);
 
           return (
             <div key={i} className="shrink-0">
@@ -139,6 +152,20 @@ const HorizontalCards = ({ data }) => {
                         <span className="text-white text-[11px] font-semibold">{d.vote_average.toFixed(1)}</span>
                       </div>
                     )}
+
+                    {/* Bookmark button */}
+                    <button
+                      id={`hcard-bookmark-${d.id}`}
+                      onClick={(e) => handleBookmark(e, d)}
+                      className={`absolute bottom-2 right-2 w-7 h-7 rounded-lg flex items-center justify-center transition-all duration-200 border shadow-md ${
+                        saved
+                          ? "bg-[#FF6B01] border-[#FF6B01] text-white opacity-100"
+                          : "bg-black/60 border-white/10 text-white/60 opacity-0 group-hover:opacity-100 hover:bg-[#FF6B01]/80 hover:border-[#FF6B01]/60 hover:text-white"
+                      }`}
+                      title={saved ? "Remove from watchlist" : "Add to watchlist"}
+                    >
+                      <i className={`${saved ? "ri-bookmark-fill" : "ri-bookmark-line"} text-xs`} />
+                    </button>
 
                     {/* Media type badge */}
                     {mediaType && (

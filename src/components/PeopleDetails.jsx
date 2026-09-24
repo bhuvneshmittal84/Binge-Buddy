@@ -8,6 +8,8 @@ import HorizontalCards from "./partials/HorizontalCards";
 import Dropdown from "./partials/Dropdown";
 import NoImage from "../../public/No_image.jpg";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { useWatchlist } from "../context/WatchlistContext";
 
 const PeopleDetails = () => {
   const navigate = useNavigate();
@@ -15,6 +17,8 @@ const PeopleDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const [category, setcategory] = useState("movie");
+  const { user } = useAuth();
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
 
   useEffect(() => {
     dispatch(asyncloadpeople(id));
@@ -75,7 +79,7 @@ const PeopleDetails = () => {
             </div>
 
             {/* Social links */}
-            <div className="flex gap-3 mt-5 justify-center lg:justify-start">
+            <div className="flex gap-3 mt-5 justify-center lg:justify-start flex-wrap">
               {socialLinks.map((s, i) =>
                 s.href.replace(/https?:\/\/[^/]+\//, "") ? (
                   <a key={i} href={s.href} target="_blank" rel="noreferrer" title={s.label}
@@ -85,6 +89,27 @@ const PeopleDetails = () => {
                 ) : null
               )}
             </div>
+
+            {/* Watchlist button */}
+            <button
+              id={`people-watchlist-${id}`}
+              onClick={() => {
+                if (!user) { navigate("/login"); return; }
+                toggleWatchlist({
+                  ...info.detail,
+                  media_type: "people",
+                  savedType: "people",
+                });
+              }}
+              className={`mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition-all border ${
+                isInWatchlist(info.detail.id)
+                  ? "bg-[#FF6B01]/15 border-[#FF6B01]/40 text-[#FF6B01] hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400"
+                  : "bg-white/5 border-white/10 text-white/70 hover:bg-[#FF6B01]/15 hover:border-[#FF6B01]/40 hover:text-[#FF6B01]"
+              }`}
+            >
+              <i className={`${isInWatchlist(info.detail.id) ? "ri-bookmark-fill" : "ri-bookmark-line"} text-base`} />
+              {isInWatchlist(info.detail.id) ? "In Watchlist" : "Add to Watchlist"}
+            </button>
 
             {/* Personal Info */}
             <div className="mt-6 bg-[#1c1c1c] border border-white/5 rounded-2xl p-5 space-y-4">

@@ -196,7 +196,7 @@ const ContactUs = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-zinc-300">Call Us</h3>
-                  <p className="text-zinc-400">+1 (555) 123-4567</p>
+                  <p className="text-zinc-400">+91 9350251337</p>
                 </div>
               </div>
 
@@ -206,7 +206,7 @@ const ContactUs = () => {
                 </div>
                 <div>
                   <h3 className="font-medium text-zinc-300">Visit Us</h3>
-                  <p className="text-zinc-400">123 Cinema St, Movieville</p>
+                  <p className="text-zinc-400">Panjab University, Chandigarh</p>
                 </div>
               </div>
 

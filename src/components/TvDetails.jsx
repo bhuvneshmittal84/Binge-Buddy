@@ -7,12 +7,16 @@ import Loader from "../components/partials/Loader";
 import HorizontalCards from "./partials/HorizontalCards";
 import NoImage from "../../public/No_image.jpg";
 import { motion } from "framer-motion";
+import { useAuth } from "../context/AuthContext";
+import { useWatchlist } from "../context/WatchlistContext";
 
 const TvDetails = () => {
   const navigate = useNavigate();
   const { info } = useSelector((state) => state.tv);
   const { id } = useParams();
   const dispatch = useDispatch();
+  const { user } = useAuth();
+  const { isInWatchlist, toggleWatchlist } = useWatchlist();
 
   useEffect(() => {
     dispatch(asyncloadtv(id));
@@ -119,7 +123,7 @@ const TvDetails = () => {
             </div>
 
             {/* CTA */}
-            <div className="mt-6">
+            <div className="mt-6 flex items-center gap-3 flex-wrap">
               <Link
                 to={`/tv/details/${id}/trailer`}
                 className="inline-flex items-center gap-2 bg-[#FF6B01] hover:bg-[#e55f00] text-white px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-lg shadow-[#FF6B01]/30"
@@ -127,6 +131,26 @@ const TvDetails = () => {
                 <i className="ri-play-fill text-base" />
                 Watch Trailer
               </Link>
+              {/* Watchlist button */}
+              <button
+                id={`tv-watchlist-${id}`}
+                onClick={() => {
+                  if (!user) { navigate("/login"); return; }
+                  toggleWatchlist({
+                    ...info.detail,
+                    media_type: "tv",
+                    savedType: "tv",
+                  });
+                }}
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all border ${
+                  isInWatchlist(info.detail.id)
+                    ? "bg-[#FF6B01]/15 border-[#FF6B01]/40 text-[#FF6B01] hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400"
+                    : "bg-white/5 border-white/10 text-white/70 hover:bg-[#FF6B01]/15 hover:border-[#FF6B01]/40 hover:text-[#FF6B01]"
+                }`}
+              >
+                <i className={`${isInWatchlist(info.detail.id) ? "ri-bookmark-fill" : "ri-bookmark-line"} text-base`} />
+                {isInWatchlist(info.detail.id) ? "In Watchlist" : "Add to Watchlist"}
+              </button>
             </div>
           </div>
         </motion.div>
