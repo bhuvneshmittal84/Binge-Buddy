@@ -6,36 +6,31 @@ import { useAuth } from "../context/AuthContext";
 function Register() {
   document.title = "Create Account – BingeBuddy";
   const { register } = useAuth();
-  const navigate = useNavigate();
+  const navigate      = useNavigate();
 
   const [username, setUsername] = useState("");
+  const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
-  const [confirm, setConfirm]   = useState("");
-  const [error, setError]       = useState("");
+  const [confirm,  setConfirm]  = useState("");
+  const [error,    setError]    = useState("");
   const [showPass, setShowPass] = useState(false);
-  const [loading, setLoading]   = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    if (password !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 300));
-    const err = register(username, password);
-    setLoading(false);
-    if (err) {
-      setError(err);
-    } else {
-      navigate("/");
-    }
-  };
+  const [loading,  setLoading]  = useState(false);
 
   const strength = password.length === 0 ? 0 : password.length < 6 ? 1 : password.length < 10 ? 2 : 3;
   const strengthLabel = ["", "Weak", "Good", "Strong"];
   const strengthColor = ["", "bg-red-500", "bg-yellow-500", "bg-green-500"];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (username.trim().length < 3) { setError("Username must be at least 3 characters."); return; }
+    if (password !== confirm)        { setError("Passwords do not match."); return; }
+    setLoading(true);
+    const err = await register(username.trim(), email, password);
+    setLoading(false);
+    if (err) setError(err);
+    else navigate("/");
+  };
 
   return (
     <div className="min-h-screen w-screen bg-[#111111] flex items-center justify-center px-4 relative overflow-hidden py-10">
@@ -66,6 +61,7 @@ function Register() {
           <p className="text-white/40 text-sm mb-7">Join BingeBuddy — track what you love.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+
             {/* Username */}
             <div className="space-y-1.5">
               <label className="text-white/60 text-xs font-medium uppercase tracking-wider">Username</label>
@@ -76,9 +72,26 @@ function Register() {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Choose a username (min 3 chars)"
+                  placeholder="Choose a display name"
                   className="flex-1 bg-transparent text-white text-sm placeholder:text-white/20 outline-none"
-                  autoComplete="username"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="space-y-1.5">
+              <label className="text-white/60 text-xs font-medium uppercase tracking-wider">Email</label>
+              <div className="flex items-center gap-2.5 bg-[#252525] border border-white/8 rounded-xl px-4 py-3 focus-within:border-[#FF6B01]/60 focus-within:shadow-[0_0_0_1px_rgba(255,107,1,0.25)] transition-all">
+                <i className="ri-mail-line text-white/30 text-base" />
+                <input
+                  id="register-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="flex-1 bg-transparent text-white text-sm placeholder:text-white/20 outline-none"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -99,44 +112,28 @@ function Register() {
                   autoComplete="new-password"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  className="text-white/30 hover:text-white/70 transition-colors"
-                >
+                <button type="button" onClick={() => setShowPass((v) => !v)} className="text-white/30 hover:text-white/70 transition-colors">
                   <i className={`${showPass ? "ri-eye-off-line" : "ri-eye-line"} text-base`} />
                 </button>
               </div>
-              {/* Strength bar */}
               {password.length > 0 && (
                 <div className="flex items-center gap-2 mt-1.5">
                   <div className="flex gap-1 flex-1">
                     {[1, 2, 3].map((lvl) => (
-                      <div
-                        key={lvl}
-                        className={`h-1 flex-1 rounded-full transition-all duration-300 ${
-                          strength >= lvl ? strengthColor[strength] : "bg-white/10"
-                        }`}
-                      />
+                      <div key={lvl} className={`h-1 flex-1 rounded-full transition-all duration-300 ${strength >= lvl ? strengthColor[strength] : "bg-white/10"}`} />
                     ))}
                   </div>
-                  <span className={`text-xs font-medium transition-colors ${
-                    strength === 1 ? "text-red-400" : strength === 2 ? "text-yellow-400" : "text-green-400"
-                  }`}>
+                  <span className={`text-xs font-medium ${strength === 1 ? "text-red-400" : strength === 2 ? "text-yellow-400" : "text-green-400"}`}>
                     {strengthLabel[strength]}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Confirm password */}
+            {/* Confirm */}
             <div className="space-y-1.5">
               <label className="text-white/60 text-xs font-medium uppercase tracking-wider">Confirm Password</label>
-              <div className={`flex items-center gap-2.5 bg-[#252525] border rounded-xl px-4 py-3 focus-within:shadow-[0_0_0_1px_rgba(255,107,1,0.25)] transition-all ${
-                confirm.length > 0 && confirm !== password
-                  ? "border-red-500/40 focus-within:border-red-500/60"
-                  : "border-white/8 focus-within:border-[#FF6B01]/60"
-              }`}>
+              <div className={`flex items-center gap-2.5 bg-[#252525] border rounded-xl px-4 py-3 focus-within:shadow-[0_0_0_1px_rgba(255,107,1,0.25)] transition-all ${confirm.length > 0 && confirm !== password ? "border-red-500/40" : "border-white/8 focus-within:border-[#FF6B01]/60"}`}>
                 <i className="ri-shield-check-line text-white/30 text-base" />
                 <input
                   id="register-confirm"
@@ -145,7 +142,6 @@ function Register() {
                   onChange={(e) => setConfirm(e.target.value)}
                   placeholder="Repeat your password"
                   className="flex-1 bg-transparent text-white text-sm placeholder:text-white/20 outline-none"
-                  autoComplete="new-password"
                   required
                 />
                 {confirm.length > 0 && (
@@ -161,8 +157,7 @@ function Register() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"
               >
-                <i className="ri-error-warning-line" />
-                {error}
+                <i className="ri-error-warning-line" /> {error}
               </motion.div>
             )}
 
@@ -174,11 +169,10 @@ function Register() {
               whileTap={{ scale: 0.97 }}
               className="w-full py-3.5 bg-[#FF6B01] hover:bg-[#e55f00] text-white font-bold rounded-xl transition-all duration-200 shadow-lg shadow-[#FF6B01]/25 flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
             >
-              {loading ? (
-                <><i className="ri-loader-4-line animate-spin" /> Creating account...</>
-              ) : (
-                <><i className="ri-user-add-line" /> Create Account</>
-              )}
+              {loading
+                ? <><i className="ri-loader-4-line animate-spin" /> Creating account...</>
+                : <><i className="ri-user-add-line" /> Create Account</>
+              }
             </motion.button>
           </form>
 

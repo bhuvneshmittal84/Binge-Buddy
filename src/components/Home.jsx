@@ -144,11 +144,11 @@ function Home() {
                   </Link>
                   <button
                     id="home-user-avatar"
-                    title={`Signed in as ${user.username}`}
+                    title={`Signed in as ${user.displayName}`}
                     onClick={() => { logout(); navigate("/login"); }}
                     className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B01] to-[#e55f00] flex items-center justify-center shadow-md hover:shadow-[#FF6B01]/40 transition-shadow"
                   >
-                    <span className="text-white text-xs font-bold uppercase">{user.username[0]}</span>
+                    <span className="text-white text-xs font-bold uppercase">{user.displayName[0]}</span>
                   </button>
                 </>
               ) : (

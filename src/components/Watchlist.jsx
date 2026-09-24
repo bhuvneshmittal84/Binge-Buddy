@@ -129,9 +129,9 @@ function Watchlist() {
             <div className="shrink-0 flex items-center gap-2">
               <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#FF6B01]/10 border border-[#FF6B01]/20 rounded-xl">
                 <div className="w-6 h-6 rounded-full bg-[#FF6B01] flex items-center justify-center">
-                  <span className="text-white text-[10px] font-bold uppercase">{user?.username?.[0]}</span>
+                  <span className="text-white text-[10px] font-bold uppercase">{user.displayName?.[0]}</span>
                 </div>
-                <span className="text-white/80 text-xs font-medium">{user?.username}</span>
+                <span className="text-white/80 text-xs font-medium">{user.displayName}</span>
               </div>
               <button
                 id="logout-btn"

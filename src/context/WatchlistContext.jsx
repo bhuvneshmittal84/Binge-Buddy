@@ -1,46 +1,50 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  collection,
+  doc,
+  setDoc,
+  deleteDoc,
+  onSnapshot,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebase/firebase";
 import { useAuth } from "./AuthContext";
 
 const WatchlistContext = createContext(null);
-
-const storageKey = (userId) => `bb_watchlist_${userId}`;
 
 export function WatchlistProvider({ children }) {
   const { user } = useAuth();
   const [watchlist, setWatchlist] = useState([]);
 
-  // Load watchlist whenever user changes
+  // Real-time Firestore listener — updates instantly across tabs/devices
   useEffect(() => {
-    if (user) {
-      try {
-        const saved = localStorage.getItem(storageKey(user.id));
-        setWatchlist(saved ? JSON.parse(saved) : []);
-      } catch {
-        setWatchlist([]);
-      }
-    } else {
+    if (!user) {
       setWatchlist([]);
+      return;
     }
+    const ref = collection(db, "users", user.uid, "watchlist");
+    const unsubscribe = onSnapshot(ref, (snapshot) => {
+      const items = snapshot.docs.map((d) => d.data());
+      // Sort newest first
+      items.sort((a, b) => (b.addedAt?.seconds || 0) - (a.addedAt?.seconds || 0));
+      setWatchlist(items);
+    });
+    return unsubscribe;
   }, [user]);
 
-  // Persist watchlist changes
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem(storageKey(user.id), JSON.stringify(watchlist));
-    }
-  }, [watchlist, user]);
+  const isInWatchlist = (id) =>
+    watchlist.some((item) => String(item.id) === String(id));
 
-  const isInWatchlist = (id) => watchlist.some((item) => item.id === id);
-
-  const addToWatchlist = (item) => {
+  const addToWatchlist = async (item) => {
     if (!user) return;
-    if (!isInWatchlist(item.id)) {
-      setWatchlist((prev) => [item, ...prev]);
-    }
+    const ref = doc(db, "users", user.uid, "watchlist", String(item.id));
+    await setDoc(ref, { ...item, addedAt: serverTimestamp() });
   };
 
-  const removeFromWatchlist = (id) => {
-    setWatchlist((prev) => prev.filter((item) => item.id !== id));
+  const removeFromWatchlist = async (id) => {
+    if (!user) return;
+    const ref = doc(db, "users", user.uid, "watchlist", String(id));
+    await deleteDoc(ref);
   };
 
   const toggleWatchlist = (item) => {

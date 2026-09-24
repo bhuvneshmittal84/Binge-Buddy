@@ -103,10 +103,10 @@ function UserCard({ onClose }) {
         className="w-full flex items-center gap-3 p-3 bg-[#FF6B01]/8 hover:bg-[#FF6B01]/12 transition-colors"
       >
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B01] to-[#e55f00] flex items-center justify-center shadow-md shrink-0">
-          <span className="text-white text-sm font-bold uppercase">{user.username[0]}</span>
+          <span className="text-white text-sm font-bold uppercase">{user.displayName[0]}</span>
         </div>
         <div className="flex-1 text-left min-w-0">
-          <p className="text-white text-xs font-semibold truncate">{user.username}</p>
+          <p className="text-white text-xs font-semibold truncate">{user.displayName}</p>
           <p className="text-white/30 text-[10px]">Logged in</p>
         </div>
         <i className={`ri-arrow-${expanded ? "up" : "down"}-s-line text-white/30 text-sm`} />

@@ -6,26 +6,22 @@ import { useAuth } from "../context/AuthContext";
 function Login() {
   document.title = "Login – BingeBuddy";
   const { login } = useAuth();
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
 
-  const [username, setUsername] = useState("");
+  const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error,    setError]    = useState("");
   const [showPass, setShowPass] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading,  setLoading]  = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 300)); // small delay for UX
-    const err = login(username, password);
+    const err = await login(email, password);
     setLoading(false);
-    if (err) {
-      setError(err);
-    } else {
-      navigate("/");
-    }
+    if (err) setError(err);
+    else navigate("/");
   };
 
   return (
@@ -42,7 +38,6 @@ function Login() {
         transition={{ duration: 0.5 }}
         className="relative w-full max-w-md"
       >
-        {/* Card */}
         <div className="bg-[#1a1a1a] border border-white/8 rounded-3xl p-8 sm:p-10 shadow-2xl shadow-black/60">
           {/* Logo */}
           <div className="flex items-center gap-3 mb-8">
@@ -58,19 +53,19 @@ function Login() {
           <p className="text-white/40 text-sm mb-7">Sign in to your account to continue.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Username */}
+            {/* Email */}
             <div className="space-y-1.5">
-              <label className="text-white/60 text-xs font-medium uppercase tracking-wider">Username</label>
+              <label className="text-white/60 text-xs font-medium uppercase tracking-wider">Email</label>
               <div className="flex items-center gap-2.5 bg-[#252525] border border-white/8 rounded-xl px-4 py-3 focus-within:border-[#FF6B01]/60 focus-within:shadow-[0_0_0_1px_rgba(255,107,1,0.25)] transition-all">
-                <i className="ri-user-line text-white/30 text-base" />
+                <i className="ri-mail-line text-white/30 text-base" />
                 <input
-                  id="login-username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="Enter your username"
+                  id="login-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
                   className="flex-1 bg-transparent text-white text-sm placeholder:text-white/20 outline-none"
-                  autoComplete="username"
+                  autoComplete="email"
                   required
                 />
               </div>
@@ -91,11 +86,7 @@ function Login() {
                   autoComplete="current-password"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPass((v) => !v)}
-                  className="text-white/30 hover:text-white/70 transition-colors"
-                >
+                <button type="button" onClick={() => setShowPass((v) => !v)} className="text-white/30 hover:text-white/70 transition-colors">
                   <i className={`${showPass ? "ri-eye-off-line" : "ri-eye-line"} text-base`} />
                 </button>
               </div>
@@ -108,8 +99,7 @@ function Login() {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm"
               >
-                <i className="ri-error-warning-line" />
-                {error}
+                <i className="ri-error-warning-line" /> {error}
               </motion.div>
             )}
 
@@ -121,11 +111,10 @@ function Login() {
               whileTap={{ scale: 0.97 }}
               className="w-full py-3.5 bg-[#FF6B01] hover:bg-[#e55f00] text-white font-bold rounded-xl transition-all duration-200 shadow-lg shadow-[#FF6B01]/25 flex items-center justify-center gap-2 mt-2 disabled:opacity-60"
             >
-              {loading ? (
-                <><i className="ri-loader-4-line animate-spin" /> Signing in...</>
-              ) : (
-                <><i className="ri-login-box-line" /> Sign In</>
-              )}
+              {loading
+                ? <><i className="ri-loader-4-line animate-spin" /> Signing in...</>
+                : <><i className="ri-login-box-line" /> Sign In</>
+              }
             </motion.button>
           </form>
 
